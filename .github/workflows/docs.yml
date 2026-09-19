@@ -1,0 +1,63 @@
+name: Documentation
+
+# Builds the HTML API documentation of the library with `doc-gen4` (from `docbuild/`) and
+# publishes it to GitHub Pages.  Enable it by setting "Settings → Pages → Source" of the
+# repository to "GitHub Actions"; until then the workflow still builds the documentation
+# and attaches it as an artifact, and the `deploy` job is the only part that needs Pages.
+
+# Generating the documentation walks the whole import closure, Mathlib included, so it is a
+# long job: it runs on a release tag and on demand from the Actions tab, not on every push.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+# The deployment job needs these; `contents: read` is enough for the build.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never run two deployments at once; a newer commit supersedes an older run.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Generate the documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Install elan and the toolchain pinned by `lean-toolchain`
+        run: |
+          curl -sSfL https://elan.lean-lang.org/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Get the Mathlib binaries
+        run: lake exe cache get
+
+      - name: Resolve `doc-gen4`
+        run: lake -d docbuild update doc-gen4
+
+      - name: Build the documentation
+        run: lake -d docbuild build AbstractVoronoi.All:docs
+
+      - name: Upload the documentation as a Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docbuild/.lake/build/doc
+
+  deploy:
+    name: Publish to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

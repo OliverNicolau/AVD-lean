@@ -1,0 +1,29 @@
+name = "AbstractVoronoi"
+version = "0.1.0"
+keywords = ["math", "voronoi", "computational-geometry"]
+defaultTargets = ["AbstractVoronoi"]
+
+# The same options Mathlib builds with: no automatic implicit arguments, and the standard
+# set of Mathlib style linters (they pass on the whole library).
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+relaxedAutoImplicit = false
+weak.linter.mathlibStandardSet = true
+
+# The planar topology used by this development — the Jordan curve theorem, the
+# Jordan–Schönflies theorem and the non-planarity of `K₃,₃` — is taken from the Lean 4
+# formalization of the Jordan–Schönflies theorem by Álvaro Begué.
+[[require]]
+name = "schoenflies-lean"
+git = "https://github.com/alonamaloh/schoenflies-lean.git"
+rev = "05a43d29cde026618777db3d4e4316204ccca237"
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.32.2"
+
+[[lean_lib]]
+name = "AbstractVoronoi"
+globs = ["AbstractVoronoi.+"]

@@ -1,0 +1,54 @@
+cff-version: 1.2.0
+message: >-
+  If you use this library, please cite the paper it formalizes (the mathematics is due to
+  its authors) and, if you wish, this formalization.
+title: "AbstractVoronoi: a Lean 4 formalization of abstract Voronoi diagrams"
+abstract: >-
+  A formalization in Lean 4 with Mathlib of Definition 1 to Theorem 10 of Klein, Langetepe
+  and Nilforoushan, "Abstract Voronoi diagrams revisited" (Computational Geometry 42 (2009)
+  885-902): systems of bisecting curves and their admissibility axioms, Voronoi regions and
+  diagrams, the structure theorem for neighbourhoods of a point of a Jordan curve, and the
+  fact that the diagram of n sites is a finite plane graph of size O(n).  It includes a
+  self-contained development of the planar topology the paper uses, built on a Lean
+  formalization of the Jordan-Schoenflies theorem.
+type: software
+authors:
+  - family-names: "Oliver Burwitz"
+    given-names: "Nicolau"
+license: Apache-2.0
+# Replace the placeholder with the address of the repository once it is published.
+repository-code: "https://github.com/OliverNicolau/AVD-lean"
+keywords:
+  - Lean 4
+  - Mathlib
+  - formalization
+  - abstract Voronoi diagrams
+  - computational geometry
+  - plane topology
+references:
+  - type: article
+    title: "Abstract Voronoi diagrams revisited"
+    authors:
+      - family-names: Klein
+        given-names: Rolf
+      - family-names: Langetepe
+        given-names: Elmar
+      - family-names: Nilforoushan
+        given-names: Zahra
+    journal: "Computational Geometry"
+    volume: 42
+    issue: 9
+    start: 885
+    end: 902
+    year: 2009
+    doi: "10.1016/j.comgeo.2009.03.002"
+    url: "https://www.sciencedirect.com/science/article/pii/S0925772109000364"
+    notes: >-
+      Published by Elsevier; the publisher's page may require a subscription.  The article is
+      not redistributed with this formalization.
+  - type: software
+    title: "schoenflies-lean: the Jordan-Schoenflies theorem in Lean 4"
+    authors:
+      - family-names: "Begué"
+        given-names: "Álvaro"
+    repository-code: "https://github.com/alonamaloh/schoenflies-lean"

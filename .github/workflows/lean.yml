@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and lint the library
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      # Installs the toolchain pinned by `lean-toolchain`, runs `lake exe cache get`
+      # for the Mathlib binaries and then `lake build` on the given targets.
+      - name: Build `AbstractVoronoi.All`
+        uses: leanprover/lean-action@v1
+        with:
+          build-args: "AbstractVoronoi.All"
+          lint-module: "AbstractVoronoi.All"
+          use-mathlib-cache: "true"
+
+      # The project contains exactly one `sorry` (Euler's inequality, used by Theorem 10);
+      # this step fails if a second one appears.
+      - name: Count the `sorry`s
+        run: |
+          count=$( { grep -R --include='*.lean' -c '^[[:space:]]*sorry[[:space:]]*$' AbstractVoronoi || true; } | awk -F: '{s+=$2} END {print s+0}')
+          echo "sorry count: $count"
+          test "$count" -eq 1

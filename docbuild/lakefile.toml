@@ -1,0 +1,34 @@
+# Auxiliary Lake package that generates the HTML API documentation of `AbstractVoronoi`
+# with `doc-gen4`.  It is kept out of the main package so that an ordinary `lake build`
+# does not have to download or build the documentation generator.
+#
+# Usage, from the root of the repository:
+#
+#     lake -d docbuild update doc-gen4          # resolve the generator (once)
+#     lake -d docbuild build AbstractVoronoi.All:docs
+#
+# The result is written to `docbuild/.lake/build/doc/`; open `index.html` there.  The same
+# two commands are run by the `Documentation` workflow, `.github/workflows/docs.yml`.
+#
+# `doc-gen4` turns the `origin` remote of the repository into the "source" links of the
+# generated pages, and fails if it is not a GitHub address.  In a clone whose remote is
+# elsewhere, prefix the second command with `DOCGEN_SRC=file` to get local file links
+# instead.
+name = "docbuild"
+version = "0.1.0"
+reservoir = false
+defaultTargets = []
+
+# Share the package directory of the main project, so that Mathlib and the other
+# dependencies are downloaded and built only once.
+packagesDir = "../.lake/packages"
+
+[[require]]
+name = "AbstractVoronoi"
+path = "../"
+
+# `doc-gen4` is pinned to the tag matching the toolchain in `lean-toolchain`.
+[[require]]
+name = "doc-gen4"
+scope = "leanprover"
+rev = "v4.32.2"
