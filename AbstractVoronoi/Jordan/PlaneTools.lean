@@ -1,4 +1,5 @@
 import AbstractVoronoi.Jordan.SmallDomain
+import AbstractVoronoi.Jordan.Backend
 
 /-!
 # Elementary plane-topology tools
@@ -51,7 +52,7 @@ theorem accessibleFrom_of_mem {R : Set Plane} (hR : IsOpen R) {x : Plane} (hx : 
 (`AVD.exists_arc_avoiding_arc`). -/
 theorem isPreconnected_compl_arc {κ : ℝ → Plane} (hκ : IsArc κ) :
     IsPreconnected (κ '' Icc 0 1)ᶜ := by
-  have harc : Schoenflies.IsArc (κ '' Icc 0 1) := hκ.isArc_image
+  have harc : Backend.IsArc (κ '' Icc 0 1) := hκ.isArc_image
   refine isPreconnected_of_forall_pair ?_
   intro x hx y hy
   by_cases hxy : x = y

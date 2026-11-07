@@ -1,5 +1,6 @@
 import AbstractVoronoi.Jordan.ArcSurgery
 import AbstractVoronoi.Jordan.CyclicParam
+import AbstractVoronoi.Jordan.Backend
 
 /-!
 # The boundary of a complementary domain of a closed Jordan curve
@@ -34,14 +35,14 @@ namespace AVD
 /-- **The non-separation theorem for arcs**: a simple arc does not separate the plane.
 
 Two points off a simple arc `A` can be joined by an arc that avoids `A` altogether.  This
-is `Schoenflies.arc_complement_poly` of the Lean 4 Jordan–Schönflies development,
+is `Backend.exists_arcBetween_compl_arc` (from the Lean 4 Jordan–Schönflies development),
 transported to the notion of arc used here.  It is the classical ingredient
 in the proof that the boundary of each complementary domain of a closed Jordan curve is
 the whole curve, which is part of Theorem 4 of Klein–Langetepe–Nilforoushan (2009). -/
-theorem exists_arc_avoiding_arc {A : Set Plane} (hA : Schoenflies.IsArc A) {x y : Plane}
+theorem exists_arc_avoiding_arc {A : Set Plane} (hA : Backend.IsArc A) {x y : Plane}
     (hx : x ∉ A) (hy : y ∉ A) (hxy : x ≠ y) :
     ∃ γ : ℝ → Plane, IsArc γ ∧ γ 0 = x ∧ γ 1 = y ∧ Disjoint A (γ '' Icc 0 1) := by
-  obtain ⟨B, -, hB, hBsub⟩ := Schoenflies.arc_complement_poly hA hxy hx hy
+  obtain ⟨B, hB, hBsub⟩ := Backend.exists_arcBetween_compl_arc hA hxy hx hy
   obtain ⟨γ, hγ, h0, h1, himg⟩ := exists_isArc_of_isArcBetween hB
   refine ⟨γ, hγ, h0, h1, ?_⟩
   rw [himg]
@@ -120,7 +121,7 @@ theorem IsClosedJordanCurve.subset_closure_of_separation {C : Set Plane}
   have hlt : t₀ + δ < t₀ - δ + 1 := by linarith
   have hlen : (t₀ - δ + 1) - (t₀ + δ) < 1 := by linarith
   obtain ⟨κ, hκcont, hκinj, -, -, hκimg⟩ := hΓ.exists_param_Icc hlt hlen
-  have hAarc : Schoenflies.IsArc A := ⟨κ, hκcont.continuousOn, hκinj, by rw [hAdef, ← hκimg]⟩
+  have hAarc : Backend.IsArc A := ⟨κ, hκcont.continuousOn, hκinj, by rw [hAdef, ← hκimg]⟩
   have hAC : A ⊆ C := by
     rintro x ⟨t, -, rfl⟩
     rw [← hΓ.range_eq]; exact mem_range_self t

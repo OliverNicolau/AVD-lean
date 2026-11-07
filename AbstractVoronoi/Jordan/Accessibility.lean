@@ -1,4 +1,5 @@
 import AbstractVoronoi.Jordan.ArcFacts
+import AbstractVoronoi.Jordan.Backend
 
 /-!
 # Accessible points of a closed Jordan curve
@@ -42,7 +43,7 @@ be joined by an arc avoiding `C`. -/
 theorem inter_nonempty_of_mem_domains {C : Set Plane} {D₁ D₂ : Set Plane}
     (h1o : IsOpen D₁) (h2o : IsOpen D₂) (hdisj : Disjoint D₁ D₂) (hunion : D₁ ∪ D₂ = Cᶜ)
     {p q : Plane} (hp : p ∈ D₁) (hq : q ∈ D₂) {B : Set Plane}
-    (hB : Schoenflies.IsArcBetween B p q) : (B ∩ C).Nonempty := by
+    (hB : Backend.IsArcBetween B p q) : (B ∩ C).Nonempty := by
   obtain ⟨f, hcont, -, hBf, h0, h1⟩ := hB
   by_contra hcon
   rw [not_nonempty_iff_eq_empty] at hcon
@@ -66,7 +67,7 @@ subarcs of `C`.  This is the form in which the curve is cut in the proof of **Th
 Klein–Langetepe–Nilforoushan (2009) ("we can make `U` small enough"). -/
 theorem IsClosedJordanCurve.exists_subarc_near {C : Set Plane} (hC : IsClosedJordanCurve C)
     {z : Plane} (hz : z ∈ C) {ε : ℝ} (hε : 0 < ε) :
-    ∃ (A : Set Plane) (v w : Plane), Schoenflies.IsArcBetween A v w ∧ A ⊆ C ∧ z ∈ A ∧
+    ∃ (A : Set Plane) (v w : Plane), Backend.IsArcBetween A v w ∧ A ⊆ C ∧ z ∈ A ∧
       z ≠ v ∧ z ≠ w ∧ A ⊆ Metric.ball z ε := by
   obtain ⟨Γ, hΓ⟩ := hC.exists_cyclicParam
   obtain ⟨t₀, ht₀⟩ : ∃ t₀, Γ t₀ = z := by rw [← hΓ.range_eq] at hz; exact hz

@@ -1,4 +1,5 @@
 import AbstractVoronoi.Jordan.LocalStructure
+import AbstractVoronoi.Jordan.Backend
 
 /-!
 # The complete bipartite graph `K₃,₃` has no plane embedding
@@ -69,7 +70,7 @@ theorem noPlaneEmbeddingK33 : NoPlaneEmbeddingK33 := by
   intro v a α hv ha harc h0 h1 hdisj hvi haj
   set P : Fin 3 → Fin 3 → Set Plane := fun i j => α i j '' Icc 0 1 with hPdef
   -- the nine arcs, in the set form of the Jordan–Schönflies development
-  have harcb : ∀ i j, Schoenflies.IsArcBetween (P i j) (v i) (a j) := by
+  have harcb : ∀ i j, Backend.IsArcBetween (P i j) (v i) (a j) := by
     intro i j
     have h := (harc i j).isArcBetween
     rwa [h0 i j, h1 i j] at h

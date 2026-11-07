@@ -16,6 +16,7 @@ import AbstractVoronoi.Jordan.ArcFacts
 import AbstractVoronoi.Jordan.ArcLimit
 import AbstractVoronoi.Jordan.ArcSurgery
 import AbstractVoronoi.Jordan.Arcs
+import AbstractVoronoi.Jordan.Backend
 import AbstractVoronoi.Jordan.CircleParam
 import AbstractVoronoi.Jordan.CircularCrosscut
 import AbstractVoronoi.Jordan.CircularTheta
@@ -39,6 +40,7 @@ import AbstractVoronoi.Jordan.SchoenfliesUnbounded
 import AbstractVoronoi.Jordan.SmallCrosscut
 import AbstractVoronoi.Jordan.SmallDomain
 import AbstractVoronoi.Jordan.Sphere
+import AbstractVoronoi.Jordan.SupNorm
 import AbstractVoronoi.Jordan.SphereTransfer
 import AbstractVoronoi.Jordan.ThetaCurve
 import AbstractVoronoi.Jordan.UnboundedLocal

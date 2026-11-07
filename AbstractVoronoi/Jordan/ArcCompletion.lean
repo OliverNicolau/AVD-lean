@@ -1,5 +1,6 @@
 import AbstractVoronoi.Jordan.ArcFacts
 import AbstractVoronoi.Jordan.Schoenflies
+import AbstractVoronoi.Jordan.Backend
 
 /-!
 # Completing an arc to a closed Jordan curve
@@ -127,7 +128,7 @@ theorem exists_closedJordanCurve_extend {k p q : ℝ → Plane} (hk : IsArc k) (
     ∃ C : Set Plane, IsClosedJordanCurve C ∧ k '' Icc 0 1 ⊆ C := by
   have hmem01 : (1 : ℝ) ∈ Ioc (0 : ℝ) 1 := ⟨zero_lt_one, le_refl 1⟩
   -- the arc `k`, as an arc of the Jordan–Schönflies development
-  have hkarc : Schoenflies.IsArc (k '' Icc 0 1) := ⟨k, hk.cont, hk.inj, rfl⟩
+  have hkarc : Backend.IsArc (k '' Icc 0 1) := ⟨k, hk.cont, hk.inj, rfl⟩
   -- the two far endpoints lie off `k`
   have hx1 : p 1 ∉ k '' Icc 0 1 :=
     fun h => (Set.disjoint_left.1 hpk) ⟨1, hmem01, rfl⟩ h

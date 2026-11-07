@@ -1,27 +1,21 @@
 import AbstractVoronoi.Jordan.Arcs
+import AbstractVoronoi.Jordan.Backend
 
 /-!
-# An adapter for the Jordan–Schönflies development
+# An adapter for the planar-topology backend
 
 The planar topology used in
 
 * R. Klein, E. Langetepe, Z. Nilforoushan, *Abstract Voronoi diagrams revisited*,
   Computational Geometry 42 (2009) 885–902
 
-(the Jordan curve theorem, the Jordan–Schönflies theorem, the non-planarity of `K₃,₃`, arcs
-inside open connected sets) is taken from the Lean 4 formalization of the Jordan–Schönflies
-theorem,
-
-* Á. Begué, *The Jordan–Schönflies theorem in Lean*,
-  <https://github.com/alonamaloh/schoenflies-lean>,
-
-which is a dependency of this project.  That development works with the same plane
-`EuclideanSpace ℝ (Fin 2)` as this one, and with notions of simple arc
-(`Schoenflies.IsArc`, `Schoenflies.IsArcBetween`) and of Jordan curve
-(`Schoenflies.IsJordanCurve`) that are *set*-level readings of the parametrized notions used
-here — `AVD.IsArc` and `AVD.IsClosedJordanCurve`, which are stated for parametrizations
-`ℝ → ℝ²` continuous on `[0,1]`.  This file relates the two, so that the results of that
-development can be used directly in the formalization of the paper.
+(the Jordan curve theorem, the Jordan–Schönflies theorem, arcs inside open connected sets) is
+taken from outside, through the statements of `AbstractVoronoi/Jordan/Backend.lean`.  Those
+are stated with notions of simple arc (`Backend.IsArc`, `Backend.IsArcBetween`) and of Jordan
+curve (`Backend.IsJordanCurve`) that are *set*-level readings of the parametrized notions
+used here — `AVD.IsArc` and `AVD.IsClosedJordanCurve`, which are stated for parametrizations
+`ℝ → ℝ²` continuous on `[0,1]`.  This file relates the two, so that the backend results can
+be used directly in the formalization of the paper.
 -/
 
 noncomputable section
@@ -110,7 +104,7 @@ theorem subarcParam_injOn {γ : ℝ → Plane} (h : IsArc γ) {a b : ℝ}
 Jordan–Schönflies development. -/
 theorem IsArc.isArcBetween_image {γ : ℝ → Plane} (h : IsArc γ) {a b : ℝ}
     (ha : 0 ≤ a) (hab : a < b) (hb : b ≤ 1) :
-    Schoenflies.IsArcBetween (γ '' Icc a b) (γ a) (γ b) := by
+    Backend.IsArcBetween (γ '' Icc a b) (γ a) (γ b) := by
   refine ⟨subarcParam γ a b, (continuous_subarcParam h ha hab.le hb).continuousOn,
     subarcParam_injOn h ha hab hb, subarcParam_image hab.le, ?_, ?_⟩
   · change γ (a + (b - a) * clamp01 0) = γ a
@@ -125,18 +119,18 @@ theorem IsArc.isArcBetween_image {γ : ℝ → Plane} (h : IsArc γ) {a b : ℝ}
 /-- An arc is an arc between its endpoints, in the sense of the Jordan–Schönflies
 development. -/
 theorem IsArc.isArcBetween {γ : ℝ → Plane} (h : IsArc γ) :
-    Schoenflies.IsArcBetween (γ '' Icc 0 1) (γ 0) (γ 1) :=
+    Backend.IsArcBetween (γ '' Icc 0 1) (γ 0) (γ 1) :=
   ⟨γ, h.cont, h.inj, rfl, rfl, rfl⟩
 
 /-- An arc is a simple arc in the sense of the Jordan–Schönflies development. -/
 theorem IsArc.isArc_image {γ : ℝ → Plane} (h : IsArc γ) :
-    Schoenflies.IsArc (γ '' Icc 0 1) :=
+    Backend.IsArc (γ '' Icc 0 1) :=
   ⟨γ, h.cont, h.inj, rfl⟩
 
 /-- Conversely, an arc between two points in the sense of the Jordan–Schönflies development
 is the image of an arc in the sense used here. -/
 theorem exists_isArc_of_isArcBetween {C : Set Plane} {x y : Plane}
-    (h : Schoenflies.IsArcBetween C x y) :
+    (h : Backend.IsArcBetween C x y) :
     ∃ γ : ℝ → Plane, IsArc γ ∧ γ 0 = x ∧ γ 1 = y ∧ γ '' Icc 0 1 = C := by
   obtain ⟨f, hcont, hinj, hC, h0, h1⟩ := h
   exact ⟨f, ⟨hcont, hinj⟩, h0, h1, hC⟩
@@ -147,11 +141,11 @@ theorem exists_isArc_of_isArcBetween {C : Set Plane} {x y : Plane}
 the Jordan–Schönflies development: both are the image of `[0,1]` under a map that is
 continuous there, injective on `[0,1)` and takes the same value at `0` and `1`. -/
 theorem isClosedJordanCurve_iff {C : Set Plane} :
-    IsClosedJordanCurve C ↔ Schoenflies.IsJordanCurve C := by
+    IsClosedJordanCurve C ↔ Backend.IsJordanCurve C := by
   constructor
   · rintro ⟨γ, hcont, hinj, hcl, himg⟩
-    exact ⟨γ, ⟨hcont, hcl, hinj⟩, himg⟩
-  · rintro ⟨f, ⟨hcont, hcl, hinj⟩, himg⟩
+    exact ⟨γ, hcont, hcl, hinj, himg⟩
+  · rintro ⟨f, hcont, hcl, hinj, himg⟩
     exact ⟨f, hcont, hinj, hcl, himg⟩
 
 /-- **The Jordan curve theorem**, in the form proved in the Jordan–Schönflies development
@@ -159,27 +153,19 @@ and restated for the notion of closed Jordan curve used here: a closed Jordan cu
 plane splits the plane into two disjoint open connected domains. -/
 theorem IsClosedJordanCurve.exists_separation {C : Set Plane} (h : IsClosedJordanCurve C) :
     ∃ A B : Set Plane, IsOpen A ∧ IsOpen B ∧ IsConnected A ∧ IsConnected B ∧
-      Disjoint A B ∧ Disjoint A C ∧ Disjoint B C ∧ A ∪ B ∪ C = univ := by
-  have hsep := Schoenflies.jordan_curve_theorem (isClosedJordanCurve_iff.1 h)
-  refine ⟨Schoenflies.inside C, Schoenflies.outside C, hsep.isOpen_inside, hsep.isOpen_outside,
-    hsep.isConnected_inside, hsep.isConnected_outside, Schoenflies.disjoint_inside_outside,
-    ?_, ?_, ?_⟩
-  · exact Set.disjoint_left.2 fun x hx => Schoenflies.inside_subset_compl hx
-  · exact Set.disjoint_left.2 fun x hx => Schoenflies.outside_subset_compl hx
-  · rw [Schoenflies.inside_union_outside]
-    exact compl_union_self C
+      Disjoint A B ∧ Disjoint A C ∧ Disjoint B C ∧ A ∪ B ∪ C = univ :=
+  Backend.jordan_curve_theorem (isClosedJordanCurve_iff.1 h)
 
 /-! ## Arcs inside an open connected set -/
 
 /-- Two distinct points of an open connected subset of the plane are joined by an arc
 inside it.  (This is the plane instance of the classical fact, quoted in footnote 5 of
 Klein–Langetepe–Nilforoushan (2009), that a connected open set is arcwise connected; it
-comes from `Schoenflies.exists_simple_arc_of_isPreconnected`.) -/
+comes from `Backend.exists_arcBetween_of_isPreconnected`.) -/
 theorem exists_arc_in_open {R : Set Plane} (hopen : IsOpen R) (hconn : IsPreconnected R)
     {x y : Plane} (hx : x ∈ R) (hy : y ∈ R) (hxy : x ≠ y) :
     ∃ γ : ℝ → Plane, IsArc γ ∧ γ 0 = x ∧ γ 1 = y ∧ γ '' Icc 0 1 ⊆ R := by
-  obtain ⟨A, hAR, -, harc⟩ :=
-    Schoenflies.exists_simple_arc_of_isPreconnected hopen hconn hx hy hxy
+  obtain ⟨A, hAR, harc⟩ := Backend.exists_arcBetween_of_isPreconnected hopen hconn hx hy hxy
   obtain ⟨γ, hγ, h0, h1, himg⟩ := exists_isArc_of_isArcBetween harc
   exact ⟨γ, hγ, h0, h1, himg ▸ hAR⟩
 
