@@ -34,9 +34,9 @@ Everything else in the project is supporting material: `AbstractVoronoi/Jordan/`
 planar topology (the Jordan curve theorem and what is built on top of it), and
 `AbstractVoronoi/AVD/` the API about systems of bisecting curves.
 
-Every statement of the development is proved except one, inside the proof of **Theorem 10**,
-which is the only declaration of the project whose proof contains a `sorry`: **Euler's
-inequality** `e + 1 ⩽ v + f` for finite plane graphs (`AVD.EulerSphereInequality`, stated in
+Every statement of the development is proved except one, an explicit hypothesis of
+**Theorem 10** (the project contains no `sorry`): **Euler's inequality** `e + 1 ⩽ v + f`
+for finite plane graphs (`AVD.EulerSphereInequality`, stated in
 `AbstractVoronoi/Jordan/PlaneGraph.lean`), the classical fact from which the paper reads off
 the count `O(n)`.
 

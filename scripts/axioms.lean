@@ -12,9 +12,9 @@ statement of
   Computational Geometry 42 (2009) 885–902
 
 depends.  The expected output is `propext, Classical.choice, Quot.sound` — the standard
-axioms of Lean — for every statement except Theorem 10, which depends in addition on
-`sorryAx`, through the one statement the project leaves unproved: Euler's inequality
-`AVD.EulerSphereInequality` for finite plane graphs.
+axioms of Lean — for every statement, Theorem 10 included: the one statement the project
+leaves unproved, Euler's inequality `AVD.EulerSphereInequality` for finite plane graphs, is
+an explicit hypothesis of Theorem 10, not a `sorry`.
 
 This file is not part of the library: it is not under `AbstractVoronoi/`, so `lake build`
 does not compile it.

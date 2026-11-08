@@ -37,6 +37,7 @@ import AbstractVoronoi.Jordan.ProperLocal
 import AbstractVoronoi.Jordan.Schoenflies
 import AbstractVoronoi.Jordan.SchoenfliesClosed
 import AbstractVoronoi.Jordan.SchoenfliesUnbounded
+import AbstractVoronoi.Jordan.SimpleArcs
 import AbstractVoronoi.Jordan.SmallCrosscut
 import AbstractVoronoi.Jordan.SmallDomain
 import AbstractVoronoi.Jordan.Sphere

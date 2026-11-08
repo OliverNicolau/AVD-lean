@@ -107,7 +107,7 @@ statement is used both for closed Jordan curves and for the unbounded curves of 
 
 Its **global** part is proved in this development, with no assumption: for a closed Jordan
 curve it is `AVD.IsClosedJordanCurve.exists_separation_frontier_eq` (the Jordan curve
-theorem of the Lean 4 Jordan–Schönflies development this project depends on, together with
+theorem of the planar-topology backend (`AbstractVoronoi/Jordan/Backend.lean`), together with
 the non-separation theorem for arcs, which gives that the boundary of each domain is *all*
 of `C`), and for a curve satisfying axiom `A₁` it is
 `AVD.IsUnboundedJordanCurve.exists_separation_frontier_eq`, obtained from the former by the

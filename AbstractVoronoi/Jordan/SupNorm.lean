@@ -138,7 +138,7 @@ closed square. -/
 theorem compl_modelCurve : modelCurveᶜ = openSquare 0 1 ∪ (closedSquare 0 1)ᶜ := by
   rw [openSquare_zero, closedSquare_zero]
   ext x
-  simp only [modelCurve, mem_compl_iff, mem_setOf_eq, mem_union, not_le]
+  simp only [modelCurve, mem_compl_iff, mem_ofPred_eq, mem_union, not_le]
   exact ⟨fun h => lt_or_gt_of_ne h, fun h => h.elim ne_of_lt ne_of_gt⟩
 
 end Square

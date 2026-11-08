@@ -65,7 +65,7 @@ theorem LocallyConnectedAt.of_image_homeomorph {D : Set Plane} {z : Plane} (F : 
   intro x hx y hy
   have hFx : F x ∈ F '' D ∩ W' := ⟨⟨x, hx.1, rfl⟩, hx.2⟩
   have hFy : F y ∈ F '' D ∩ W' := ⟨⟨y, hy.1, rfl⟩, hy.2⟩
-  have hjoined := (hjoin _ hFx _ hFy).map F.symm.continuous
+  have hjoined := (hjoin _ hFx _ hFy).map F.symm.continuous.continuousOn
   have himg : F.symm '' (F '' D ∩ F '' V) = D ∩ V := by
     rw [← Set.image_inter F.injective, ← Set.image_comp]
     simp
@@ -107,7 +107,7 @@ theorem LocallyConnectedAt.of_openPartialHomeomorph {D : Set Plane} {z : Plane}
   have hV'tgt : V' ⊆ e.target := by
     rintro _ ⟨a, ha, rfl⟩
     exact e.map_source (hV₀src ha)
-  have hjoined := (hjoin _ hxA _ hyA).map_continuousOn
+  have hjoined := (hjoin _ hxA _ hyA).map
     (e.continuousOn_symm.mono (fun u hu => hAtgt hu.1))
   rw [e.left_inv hx.2.2, e.left_inv hy.2.2] at hjoined
   refine hjoined.mono ?_

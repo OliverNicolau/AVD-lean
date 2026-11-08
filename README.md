@@ -38,13 +38,13 @@ and their proofs are the authors', no new mathematical result is claimed.
 | Lemma 7 (i), (ii) | `AVD.CurveSystem.lemma7_touching`, `…lemma7_crossing` | ✅ |
 | Lemma 8 | `AVD.CurveSystem.lemma8` | ✅ |
 | Lemma 9 (`O(n³)` vertices) | `AVD.CurveSystem.lemma9` | ✅ |
-| Theorem 10 (the diagram is a plane graph of size `O(n)`) | `AVD.CurveSystem.theorem10` | ⚠️ uses one classical assumption |
+| Theorem 10 (the diagram is a plane graph of size `O(n)`) | `AVD.CurveSystem.theorem10` | ⚠️ takes one classical fact as a hypothesis |
 
 ⚠️ **One classical fact is assumed, in one place.** Euler's inequality `e + 1 ⩽ v + f` for
 plane graphs (`AVD.EulerSphereInequality`) is stated but not proved here — Mathlib does not
-have it in a usable form — and the proof of Theorem 10 invokes it through the single `sorry`
-of the project.  Everything else, including all of Definition 1 – Lemma 9 and the plane
-graph structure of the diagram, is proved from the standard axioms of Lean.  See
+have it in a usable form — and Theorem 10 takes it as an explicit hypothesis `hEuler`.  The
+project contains no `sorry`: everything, including all of Definition 1 – Lemma 9 and the
+plane graph structure of the diagram, is proved from the standard axioms of Lean.  See
 [`docs/formalization.md`](docs/formalization.md#what-is-proved-and-what-is-assumed).
 
 ## Using it as a dependency
@@ -55,7 +55,7 @@ Add to your `lakefile.toml`
 [[require]]
 name = "AbstractVoronoi"
 git = "https://github.com/OliverNicolau/AVD-lean.git"
-rev = "v0.1.0"   # or "main" to follow the default branch
+rev = "v0.2.0"   # or "main" to follow the default branch
 ```
 
 (The repository address is filled in at publication time; `scripts/set-repository-url.sh`
@@ -68,8 +68,9 @@ import AbstractVoronoi.Paper   -- the numbered statements of the paper
 import AbstractVoronoi.All     -- everything, including the planar topology
 ```
 
-Your project must use the toolchain of `lean-toolchain` (Lean 4.32.2) and the Mathlib
-revision of `lake-manifest.json`.
+Your project must use the toolchain of `lean-toolchain` (Lean `v4.36.0-rc2`) and the Mathlib
+revision of `lake-manifest.json` (commit `1b1ccf4b088b32fa3f23f2de1127433254a81e1e`, the one
+pinned by Tau Ceti).
 
 Besides abstract Voronoi diagrams, the library contains a self-contained development of
 **planar topology** (`AbstractVoronoi/Jordan/`) that may be useful on its own: accessibility
@@ -83,10 +84,12 @@ With [`elan`](https://github.com/leanprover/elan) installed:
 
 ```
 lake exe cache get   # Mathlib binaries; strongly recommended
-lake build           # the whole library; one `sorry`, in Theorem 10
+lake build           # the whole library, with no `sorry`
 ```
 
-All dependencies are pinned by `lean-toolchain` and `lake-manifest.json`, so a plain
+Tau Ceti has no prebuilt binaries usable here, so a first build also compiles about 360 of
+its files (about ten minutes on a 16-core laptop, longer on CI runners) before the project
+itself.  All dependencies are pinned by `lean-toolchain` and `lake-manifest.json`, so a plain
 `lake build` resolves nothing by itself; **do not run `lake update`**.  The same build runs
 in CI (`.github/workflows/lean.yml`).
 
@@ -99,7 +102,7 @@ in CI (`.github/workflows/lean.yml`).
   four places where the formal statement differs from the printed one, and exactly what is
   proved and what is assumed.
 * [`docs/library.md`](docs/library.md) — the layout of the library, file by file, and the
-  Jordan–Schönflies development it builds on.
+  planar-topology dependency it builds on.
 * [`notes/`](notes) — working notes: a statement-by-statement check against the paper, the
   figures of Lemma 8, the Euler count, and the open problems.
 * [`AGENTS.md`](AGENTS.md) — conventions and the checks to run, for contributors and for
@@ -130,9 +133,11 @@ This repository is released under the **Apache License 2.0** (see [`LICENSE`](LI
 licence of Lean 4, Mathlib and the other dependencies.
 
 It builds on [Lean 4](https://github.com/leanprover/lean4),
-[Mathlib](https://github.com/leanprover-community/mathlib4), and Álvaro Begué's Lean 4
-formalization of the Jordan–Schönflies theorem
-([`schoenflies-lean`](https://github.com/alonamaloh/schoenflies-lean)), which supplies the
-Jordan curve theorem, the Schönflies extension theorem, the non-separation theorem for arcs
-and the non-planarity of `K₃,₃`.  Full credits are in
+[Mathlib](https://github.com/leanprover-community/mathlib4), and
+[Tau Ceti](https://github.com/TauCetiProject/TauCeti), which supplies the Jordan curve
+theorem, the Jordan–Schönflies theorem and the fact that a simple arc does not separate the
+plane.  Version 0.1.0 was built instead on Álvaro Begué's Lean 4 formalization of the
+Jordan–Schönflies theorem
+([`schoenflies-lean`](https://github.com/alonamaloh/schoenflies-lean)); the sup-norm helpers
+of `AbstractVoronoi/Jordan/SupNorm.lean` are adapted from it.  Full credits are in
 [`docs/library.md`](docs/library.md#acknowledgements-and-dependencies).

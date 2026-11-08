@@ -48,8 +48,8 @@ What remains unproved are the two classical facts, here kept apart as two propos
   needs, it is *proved* (`AVD.CurveSystem.three_le_edges_at_vertex`);
 * `AVD.EulerSphereInequality` — the Euler inequality `e + 1 ⩽ v + f` for plane graphs.
 
-The second of these is the one statement that the proof of `AVD.CurveSystem.theorem10` still
-takes on faith (it appears there as a single `sorry`).  Everything else the theorem asserts —
+The second of these is the one statement that `AVD.CurveSystem.theorem10` still takes on
+faith (it is an explicit hypothesis of the theorem).  Everything else the theorem asserts —
 including the explicit bound `2·C(n,3)` on the number of vertices coming from Lemma 9 — is
 proved.
 -/
@@ -182,7 +182,7 @@ theorem IsFinitePlaneGraph.three_mul_vtx_le_two_mul_edge {Vtx : Set Plane}
     have hsub : ((VF.filter fun v => v ∈ closure e : Finset Plane) : Set Plane)
         ⊆ closure e \ e := by
       intro v hv
-      simp only [Finset.coe_filter, Set.mem_setOf_eq, hVF, Set.Finite.mem_toFinset] at hv
+      simp only [Finset.coe_filter, Set.mem_ofPred_eq, hVF, Set.Finite.mem_toFinset] at hv
       refine ⟨hv.2, ?_⟩
       intro hve
       exact (Set.disjoint_left.1 hG.vtx_disjoint hv.1) ⟨e, heEdg, hve⟩
@@ -266,7 +266,8 @@ vertex, for which `v - e + f ⩾ 2`.
 
 This proposition is **not proved** in this development; it is Euler's formula for embedded
 plane graphs, which no available library supplies (see `notes/euler-formula-and-counting.md`).
-It is the one statement that the proof of `AVD.CurveSystem.theorem10` still takes on faith. -/
+It is the one statement that `AVD.CurveSystem.theorem10` still takes on faith, as an explicit
+hypothesis. -/
 def EulerSphereInequality : Prop :=
   ∀ (Vtx : Set Plane) (Edg : Set (Set Plane)), IsFinitePlaneGraph Vtx Edg →
     (faceSet (Vtx ∪ ⋃₀ Edg)).Finite →

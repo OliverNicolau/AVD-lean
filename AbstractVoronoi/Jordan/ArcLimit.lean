@@ -1,4 +1,4 @@
-import AbstractVoronoi.Jordan.ArcSurgery
+import AbstractVoronoi.Jordan.SimpleArcs
 
 /-!
 # Arcs ending at a limit point of a nested family of domains
@@ -177,14 +177,14 @@ theorem exists_link (hWopen : ∀ n, IsOpen (W n)) (hWconn : ∀ n, IsPreconnect
     simp only
     linarith
   set β' : ℝ → Plane := fun t => if t ≤ σ then β t else A (ψ t) with hβ'def
-  have hβ'eq1 : ∀ t ∈ Icc (0 : ℝ) σ, β' t = β t := fun t ht => if_pos ht.2
-  have hβ'le : ∀ t, t ≤ σ → β' t = β t := fun t ht => if_pos ht
+  have hβ'eq1 : ∀ t ∈ Icc (0 : ℝ) σ, β' t = β t := fun t ht => ite_eq_left ht.2
+  have hβ'le : ∀ t, t ≤ σ → β' t = β t := fun t ht => ite_eq_left ht
   have hβ'eq2 : ∀ t ∈ Icc σ L', β' t = A (ψ t) := by
     intro t ht
     rcases eq_or_lt_of_le ht.1 with h | h
     · rw [← h, hβ'le σ le_rfl, hψσ, hσy]
     · rw [hβ'def]
-      exact if_neg (not_le.2 h)
+      exact ite_eq_right (not_le.2 h)
   -- continuity
   have hcont' : ContinuousOn β' (Icc 0 L') := by
     have h1 : ContinuousOn β' (Icc 0 σ) :=
@@ -373,7 +373,7 @@ theorem exists_arc_to_limit (hWopen : ∀ n, IsOpen (W n)) (hWconn : ∀ n, IsPr
     intro n t ht
     have htS : t < S := ht.trans (hstabS n)
     rw [hγ₀def]
-    simp only [if_pos htS]
+    simp only [ite_eq_left htS]
     exact (hagree (N t) n (hNle t n ht) t (hNmem t htS).le).symm
   have hγ₀S : γ₀ S = z := by
     rw [hγ₀def]

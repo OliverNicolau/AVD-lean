@@ -1,4 +1,5 @@
 import AbstractVoronoi.Jordan.LocalStructure
+import AbstractVoronoi.Jordan.SimpleArcs
 
 /-!
 # Two classical facts about arcs in the plane

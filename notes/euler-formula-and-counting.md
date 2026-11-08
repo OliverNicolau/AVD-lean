@@ -7,7 +7,7 @@ from **Euler's formula for plane graphs**, which is the one statement this devel
 not prove.  This note records how that is handled, and why an existing Lean formalization of
 Euler's formula does not help.
 
-## 1. What is stated, and where the `sorry` is
+## 1. What is stated, and what is assumed
 
 `AbstractVoronoi/Jordan/PlaneGraph.lean` introduces
 
@@ -45,9 +45,9 @@ With them, `AVD.EulerPlaneBounds` is *derived* from `AVD.EulerSphereInput`
 `AVD.IsFinitePlaneGraph.ncard_le_of_degree`): `3v ⩽ 2e` and `e + 1 ⩽ v + f` give `v ⩽ 2f - 2`
 and `e ⩽ 3f - 3`.
 
-`AVD.EulerSphereInequality` is therefore the only statement invoked by the proof of
-`AVD.CurveSystem.theorem10` through a `sorry`, and `AVD.CurveSystem.theorem10` is the only
-declaration of the project that depends on `sorryAx` (checked with `#print axioms`).
+`AVD.EulerSphereInequality` is therefore the only statement `AVD.CurveSystem.theorem10`
+takes on faith, as the explicit hypothesis `hEuler`.  The project contains no `sorry`, and no
+declaration depends on `sorryAx` (checked with `#print axioms`).
 
 The bounds are stated with slack (`2f` and `3f` rather than `2f - 4` and `3f - 6`) because
 the graph may be disconnected and its edges may be unbounded, as they are for a Voronoi
@@ -109,9 +109,10 @@ embedded graph and counting its faces — is the entire difficulty.  Importing t
 would not reduce it.
 
 **(b) Toolchain and Mathlib version.**  That project is pinned to `leanprover/lean4:v4.29.1`
-with Mathlib `v4.29.1`, while this project is pinned to `leanprover/lean4:v4.32.2` with
-Mathlib `v4.32.2` (forced by the Jordan–Schönflies dependency, which supplies the Jordan
-curve theorem and the Jordan–Schönflies theorem used throughout).  A single Lake build can
+with Mathlib `v4.29.1`, while this project is pinned to `leanprover/lean4:v4.36.0-rc2` with
+Mathlib at commit `1b1ccf4b088b32fa3f23f2de1127433254a81e1e` (forced by the Tau Ceti
+dependency, which supplies the Jordan curve theorem and the Jordan–Schönflies theorem used
+throughout).  A single Lake build can
 contain only one revision of Mathlib, so importing it would require porting one side of the
 pair.  Given (a), that work would buy nothing for Theorem 10.
 

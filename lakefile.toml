@@ -1,5 +1,5 @@
 name = "AbstractVoronoi"
-version = "0.1.0"
+version = "0.2.0"
 keywords = ["math", "voronoi", "computational-geometry"]
 defaultTargets = ["AbstractVoronoi"]
 
@@ -11,18 +11,20 @@ autoImplicit = false
 relaxedAutoImplicit = false
 weak.linter.mathlibStandardSet = true
 
-# The planar topology used by this development — the Jordan curve theorem, the
-# Jordan–Schönflies theorem and the non-planarity of `K₃,₃` — is taken from the Lean 4
-# formalization of the Jordan–Schönflies theorem by Álvaro Begué.
+# The planar topology used by this development (the Jordan curve theorem, the
+# Jordan–Schönflies theorem) is taken from Tau Ceti (Apache-2.0), pinned at one commit,
+# through the single interface file `AbstractVoronoi/Jordan/Backend.lean`. Mathlib is pinned
+# at exactly the commit of Tau Ceti's own manifest. Do not run `lake update`.
+# The earlier version, built on Álvaro Begué's schoenflies-lean, is tagged `v1-schoenflies`.
 [[require]]
-name = "schoenflies-lean"
-git = "https://github.com/alonamaloh/schoenflies-lean.git"
-rev = "05a43d29cde026618777db3d4e4316204ccca237"
+name = "TauCeti"
+git = "https://github.com/TauCetiProject/TauCeti.git"
+rev = "4908b0344e1be5f7e9e5af7f7e640464843a2c84"
 
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4.git"
-rev = "v4.32.2"
+rev = "1b1ccf4b088b32fa3f23f2de1127433254a81e1e"
 
 [[lean_lib]]
 name = "AbstractVoronoi"

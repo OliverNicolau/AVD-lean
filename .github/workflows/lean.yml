@@ -23,10 +23,10 @@ jobs:
           lint-module: "AbstractVoronoi.All"
           use-mathlib-cache: "true"
 
-      # The project contains exactly one `sorry` (Euler's inequality, used by Theorem 10);
-      # this step fails if a second one appears.
+      # The project contains no `sorry` (Euler's inequality is an explicit hypothesis of
+      # Theorem 10); this step fails if one appears.
       - name: Count the `sorry`s
         run: |
           count=$( { grep -R --include='*.lean' -c '^[[:space:]]*sorry[[:space:]]*$' AbstractVoronoi || true; } | awk -F: '{s+=$2} END {print s+0}')
           echo "sorry count: $count"
-          test "$count" -eq 1
+          test "$count" -eq 0

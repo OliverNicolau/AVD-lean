@@ -1,4 +1,4 @@
-import AbstractVoronoi.Jordan.ArcSurgery
+import AbstractVoronoi.Jordan.SimpleArcs
 import AbstractVoronoi.Jordan.CyclicParam
 import AbstractVoronoi.Jordan.Backend
 
@@ -15,9 +15,9 @@ namely that the two domains `D₁, D₂` of `ℝ² \ C` produced by the Jordan c
 Jordan curve theorem itself gives (`AVD.IsClosedJordanCurve.exists_separation_frontier`).
 
 The classical route, which is the one followed here, is the *non-separation theorem for
-arcs*: a simple arc does not separate the plane.  That theorem is available in the Lean 4
-Jordan curve theorem development this project depends on, as
-`JordanCurveTheorem.simple_arc_conn_complement`; it is restated here as
+arcs*: a simple arc does not separate the plane.  It comes from the planar-topology backend
+(`AVD.Backend.isConnected_compl_arc`) through `AVD.exists_isArc_compl_arc`
+(`AbstractVoronoi/Jordan/SimpleArcs.lean`), and is restated here as
 `AVD.exists_arc_avoiding_arc`.  Given `z ∈ C` and a small ball `B` around `z`, one removes
 from `C` a short open piece around `z` contained in `B`; what is left is a simple arc `A`,
 so a point `a ∈ D₁` and a point `b ∈ D₂` can be joined by an arc `γ` avoiding `A`.  Since
@@ -35,18 +35,16 @@ namespace AVD
 /-- **The non-separation theorem for arcs**: a simple arc does not separate the plane.
 
 Two points off a simple arc `A` can be joined by an arc that avoids `A` altogether.  This
-is `Backend.exists_arcBetween_compl_arc` (from the Lean 4 Jordan–Schönflies development),
-transported to the notion of arc used here.  It is the classical ingredient
+is `AVD.exists_isArc_compl_arc` (`AbstractVoronoi/Jordan/SimpleArcs.lean`), for an arc
+given as a set.  It is the classical ingredient
 in the proof that the boundary of each complementary domain of a closed Jordan curve is
 the whole curve, which is part of Theorem 4 of Klein–Langetepe–Nilforoushan (2009). -/
 theorem exists_arc_avoiding_arc {A : Set Plane} (hA : Backend.IsArc A) {x y : Plane}
     (hx : x ∉ A) (hy : y ∉ A) (hxy : x ≠ y) :
     ∃ γ : ℝ → Plane, IsArc γ ∧ γ 0 = x ∧ γ 1 = y ∧ Disjoint A (γ '' Icc 0 1) := by
-  obtain ⟨B, hB, hBsub⟩ := Backend.exists_arcBetween_compl_arc hA hxy hx hy
-  obtain ⟨γ, hγ, h0, h1, himg⟩ := exists_isArc_of_isArcBetween hB
-  refine ⟨γ, hγ, h0, h1, ?_⟩
-  rw [himg]
-  exact Set.disjoint_right.2 fun w hw => hBsub hw
+  obtain ⟨f, hcont, hinj, rfl⟩ := hA
+  obtain ⟨γ, hγ, h0, h1, hsub⟩ := exists_isArc_compl_arc ⟨hcont, hinj⟩ hxy hx hy
+  exact ⟨γ, hγ, h0, h1, Set.disjoint_right.2 fun w hw => hsub hw⟩
 
 /-- The first point at which a path meets a closed set, in the form needed below: if `γ` is
 continuous on `[0,1]`, `K` is closed, `γ 0 ∉ K` and `γ t₁ ∈ K` for some `t₁ ∈ [0,1]`, then

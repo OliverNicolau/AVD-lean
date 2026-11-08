@@ -9,7 +9,8 @@ Section 2 and Section 3, against the formal statements of `AbstractVoronoi/Paper
 each numbered item: what the paper says, what the Lean declaration says, and where the two
 differ.  Everything listed here is proved, with no open hypothesis, except for one assertion
 of Theorem 10: its `O(n)` count, which rests on Euler's inequality
-`AVD.EulerSphereInequality`, stated but not proved (the single `sorry` of the project).  The
+`AVD.EulerSphereInequality`, stated but not proved and taken as the explicit hypothesis
+`hEuler` of the theorem (the project contains no `sorry`).  The
 other input of that count, the degree condition at a Voronoi vertex, *is* proved
 (`AVD.CurveSystem.three_le_edges_at_vertex`).
 
@@ -27,7 +28,7 @@ other input of that count, the degree condition at a Voronoi vertex, *is* proved
 | Lemma 7 (ii) | `AVD.CurveSystem.lemma7_crossing` | faithful, stated without the paper's orientation convention |
 | Lemma 8 | `AVD.CurveSystem.lemma8` | literal |
 | Lemma 9 | `AVD.CurveSystem.lemma9` | faithful; the hypothesis `n ⩾ 3` is not needed |
-| Theorem 10 | `AVD.CurveSystem.theorem10` | literal; the plane-graph structure and the degree condition at a Voronoi vertex are proved, and the `O(n)` count rests on the stated but unproved `AVD.EulerSphereInequality` |
+| Theorem 10 | `AVD.CurveSystem.theorem10` | literal, plus the hypothesis `hEuler`; the plane-graph structure and the degree condition at a Voronoi vertex are proved, and the `O(n)` count rests on the stated but unproved `AVD.EulerSphereInequality`, taken as the hypothesis `hEuler` |
 
 ## Remarks on the individual items
 
@@ -93,8 +94,8 @@ statement (`|B'| ⩽ 2n` and `|E| ⩽ 3n`), so that the statement stays close to
 and it is the one assertion of the development that is not proved: it is
 deduced, by a proved counting argument (`AVD.IsFinitePlaneGraph.ncard_le_of_degree`), from the
 proved degree condition at a Voronoi vertex (at least three edges end at it,
-`AVD.CurveSystem.three_le_edges_at_vertex`) and from `AVD.EulerSphereInequality`, invoked
-through the single `sorry` of the project.  What that deduction needs about the diagram *is*
+`AVD.CurveSystem.three_le_edges_at_vertex`) and from `AVD.EulerSphereInequality`, the
+explicit hypothesis `hEuler` of the theorem.  What that deduction needs about the diagram *is*
 proved: the diagram is a finite plane graph (`AVD.CurveSystem.isFinitePlaneGraph`), its faces
 are the non-empty Voronoi regions, of which there are at most `n`
 (`AVD.CurveSystem.faceSet_V_eq`, `…faceSet_V_ncard_le`), and each Voronoi vertex lies on the

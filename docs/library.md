@@ -52,9 +52,12 @@ the paper (the Voronoi region and the Voronoi diagram of a curve system) are
 | file | contents |
 | --- | --- |
 | `Sphere.lean` | the plane, closed Jordan curves (in any space), the sphere `S²` and its stereographic projection, **axiom `A₁`** stated as in the paper, and the proof that such a curve admits a proper parametrization `ℝ → ℝ²` |
+| `SupNorm.lean` | the sup norm of the plane, axis-parallel squares, and the model curve, the boundary of the square `[-1,1]²` |
+| `Backend.lean` | **the trust boundary**: the only file importing the external planar-topology library; it states, and proves from Tau Ceti and Mathlib, the Jordan curve theorem, the connectedness of the complement of a simple arc and the Jordan–Schönflies theorem (see below) |
 | `Arcs.lean` | arcs and accessibility |
-| `Adapter.lean` | the adapter to the Jordan–Schönflies development: the two notions of arc and of closed Jordan curve are identified, the Jordan curve theorem is restated, and open connected plane sets are shown arcwise connected |
+| `Adapter.lean` | the adapter to `Backend.lean`: the two notions of arc and of closed Jordan curve are identified, and the Jordan curve theorem is restated |
 | `ArcSurgery.lean` | surgery on arcs: reversal, subarcs, concatenation, first intersection point with a closed set, and the cutting step |
+| `SimpleArcs.lean` | two points of an open connected plane set are joined by an arc inside it (`AVD.exists_isArc_of_isPreconnected`, `AVD.exists_arc_in_open`), and two points off a simple arc by an arc avoiding it (`AVD.exists_isArc_compl_arc`) |
 | `CyclicParam.lean` | `1`-periodic parametrizations of closed Jordan curves, and the arcs cut out of a curve by a short parameter interval |
 | `Schoenflies.lean` | the non-separation theorem for arcs, and the proof that each complementary domain of a closed Jordan curve has the **whole** curve as boundary (global part of **Theorem 4**) |
 | `SphereTransfer.lean` | the transfer of that statement through the sphere to the unbounded curves of axiom `A₁` |
@@ -78,7 +81,7 @@ the paper (the Voronoi region and the Voronoi diagram of a curve system) are
 | `CrosscutNear.lean` | crosscuts near a point, in the form used by the local construction |
 | `LocalAccessibility.lean` | the local part of **Theorem 4** for a closed Jordan curve, from local connectedness |
 | `UnboundedLocal.lean` | the same for the unbounded curves of axiom `A₁` |
-| `K33.lean` | the fact that `K₃,₃` has no plane embedding (Thomassen's argument used in Lemma 9), proved from the dependency |
+| `K33.lean` | the fact that `K₃,₃` has no plane embedding (Thomassen's argument used in Lemma 9), proved from the Jordan–Schönflies theorem and the θ-curve theorem |
 | `LineComponents.lean` | an open subset of the line with finite frontier has finitely many components, at most one more than it has frontier points; the ends of a component are frontier points; and an open interval has at most two ends (`frontier I ⊆ {sInf I, sSup I}`) |
 | `PlaneGraph.lean` | finite plane graphs, their faces and **Euler's formula**: an edge has at most two ends and the handshake inequality `3v ⩽ 2e` are proved here, and with them the counting bounds `AVD.EulerPlaneBounds`; the two classical topological inputs `AVD.PlaneGraphVertexDegree` (the degree condition, proved for the Voronoi diagram in `AVD/VertexDegree.lean`) and `AVD.EulerSphereInequality` (Euler's inequality, the only statement of the project that is not proved) are stated here |
 | `ProperLocal.lean` | properly embedded lines near one of their points: affine reparametrization (`AVD.IsProperLineParam.affine`) and the fact that small balls around `γ a` pull back to small parameter intervals (`AVD.IsProperLineParam.exists_ball_preimage_subset`), whence the branch structure of a subarc at a frontier parameter (`AVD.IsProperLineParam.exists_branch`) |
@@ -101,38 +104,46 @@ the paper (the Voronoi region and the Voronoi diagram of a curve system) are
 | `Faces.lean` | the faces of the diagram are its non-empty Voronoi regions (`faceSet_V_eq`), there are at most `n` of them, every Voronoi vertex lies on at least three of them, and `V(S)` is a finite plane graph (`isFinitePlaneGraph`) |
 | `VertexDegree.lean` | how many edges end at a Voronoi vertex: near a point the diagram consists of that point and of the edges ending there (`exists_nbhd_V_inter_subset`); if those all lie on a single bisecting curve, at most two faces meet there (`faces_at_le_two_of_edges_subset_J`); near one of its ends an edge is a single branch of the curve carrying it (`edge_isBranch_at_end`); and **at least three edges end at every Voronoi vertex** (`three_le_edges_at_vertex`), the degree condition of the Euler count |
 
-Two further top-level files: `AbstractVoronoi/Imports.lean` collects `Mathlib` and the
-Jordan–Schönflies development (every file of the project imports it, directly or
-indirectly), and `AbstractVoronoi/All.lean` imports every module of the project.
+Two further top-level files: `AbstractVoronoi/Imports.lean` collects `Mathlib` (every file
+of the project imports it, directly or indirectly), and `AbstractVoronoi/All.lean` imports every module of the project.
 
-## Dependency: the Jordan–Schönflies theorem
+## Dependency: Tau Ceti
 
-The planar topology the paper relies on is taken from the Lean 4 formalization of the
-Jordan–Schönflies theorem
+The planar topology the paper relies on is taken from
 
-> Á. Begué, *The Jordan–Schönflies theorem in Lean*,
-> <https://github.com/alonamaloh/schoenflies-lean>,
+> Tau Ceti, <https://github.com/TauCetiProject/TauCeti> (Apache License 2.0),
 
 which is a Lake dependency of this project (pinned commit
-`05a43d29cde026618777db3d4e4316204ccca237`).  That development is built with Lean 4.32.2 and
-Mathlib `v4.32.2`, so this project uses the same toolchain and Mathlib version.  It provides,
-with no `sorry` and no extra axioms:
+`4908b0344e1be5f7e9e5af7f7e640464843a2c84`).  The project uses the toolchain
+`leanprover/lean4:v4.36.0-rc2` and pins Mathlib at exactly the commit of Tau Ceti's own
+manifest, `1b1ccf4b088b32fa3f23f2de1127433254a81e1e`.  Tau Ceti has no prebuilt binaries
+usable here, so a first build compiles about 360 of its files before the project.
 
-* the **Jordan curve theorem** (`Schoenflies.jordan_curve_theorem`);
-* the **Jordan–Schönflies theorem** (`Schoenflies.jordan_schoenflies_of_homeomorph`): every
+Only `AbstractVoronoi/Jordan/Backend.lean` imports Tau Ceti.  It defines set-level simple
+arcs and Jordan curves (`Backend.IsArc`, `Backend.IsArcBetween`, `Backend.IsJordanCurve`)
+and proves from Tau Ceti and Mathlib
+
+* the **Jordan curve theorem** (`Backend.jordan_curve_theorem`);
+* the connectedness of the **complement of a simple arc** (`Backend.isConnected_compl_arc`);
+* the **Jordan–Schönflies theorem** (`Backend.jordan_schoenflies_of_homeomorph`): every
   homeomorphism between two Jordan curves of the plane extends to a homeomorphism of the
   plane;
-* the connectedness of the complement of a simple arc (`Schoenflies.arc_complement`), the
-  arcwise connectedness of open connected plane sets
-  (`Schoenflies.exists_simple_arc_of_isPreconnected`) and the non-planarity of `K₃,₃`
-  (`Graph.IsArcK33.elim`).
+* that the boundary of the square `[-1,1]²` is a Jordan curve homeomorphic to every Jordan
+  curve (`Backend.isJordanCurve_modelCurve`,
+  `Backend.IsJordanCurve.nonempty_homeomorph_modelCurve`).
 
-The plane of that development is `EuclideanSpace ℝ (Fin 2)`, the same one used here, and its
-notions of simple arc and Jordan curve are the set-level readings of the parametrized notions
-used here; `AbstractVoronoi/Jordan/Adapter.lean` identifies the two.
+The plane is `EuclideanSpace ℝ (Fin 2)`; inside `Backend.lean` it is identified with the
+plane `ℂ` of Tau Ceti by the linear isometry `Complex.orthonormalBasisOneI.repr`.
+`AbstractVoronoi/Jordan/Adapter.lean` identifies the set-level notions of arc and Jordan
+curve with the parametrized notions used in the rest of the library.  Arcs in open connected
+sets, the non-separation theorem for arcs and the non-planarity of `K₃,₃` are proved in this
+project (`Jordan/SimpleArcs.lean`, `Jordan/Schoenflies.lean`, `Jordan/K33.lean`).
 
 It is the Jordan–Schönflies theorem that makes the *local* part of **Theorem 4** of the paper
 provable: see `AbstractVoronoi/Jordan/SchoenfliesClosed.lean`.
+
+Version 0.1.0 took this planar topology from Álvaro Begué's `schoenflies-lean`; that version
+is tagged `v1-schoenflies`.
 
 ## Acknowledgements and dependencies
 
@@ -152,12 +163,16 @@ project.
 * **Mathlib** (<https://github.com/leanprover-community/mathlib4>), the Lean mathematical
   library, by the Mathlib community; released under the Apache 2.0 licence.  It supplies
   all the general topology, analysis and combinatorics used here.
+* **Tau Ceti** (<https://github.com/TauCetiProject/TauCeti>), pinned at commit
+  `4908b0344e1be5f7e9e5af7f7e640464843a2c84`; released under the Apache 2.0 licence.  It
+  supplies the Jordan curve theorem, the Jordan–Schönflies theorem and the fact that a
+  simple arc does not separate the plane, from which `AbstractVoronoi/Jordan/Backend.lean`
+  proves the inputs of the planar topology of `AbstractVoronoi/Jordan/`.
 * **`schoenflies-lean`** (<https://github.com/alonamaloh/schoenflies-lean>), the Lean 4
-  formalization of the Jordan–Schönflies theorem by Álvaro Begué, pinned at commit
-  `05a43d29cde026618777db3d4e4316204ccca237`.  It provides the Jordan curve theorem, the
-  Jordan–Schönflies extension theorem, the non-separation theorem for arcs and the
-  non-planarity of `K₃,₃`, the four inputs from which the planar topology of
-  `AbstractVoronoi/Jordan/` is built.  See its repository for its own licence terms.
+  formalization of the Jordan–Schönflies theorem by Álvaro Begué.  Version 0.1.0 of this
+  project was built on it (pinned at commit `05a43d29cde026618777db3d4e4316204ccca237`), and
+  the sup-norm helpers of `AbstractVoronoi/Jordan/SupNorm.lean` are adapted from its
+  `Schoenflies/Square.lean`.  See its repository for its own licence terms.
 * The transitive Lake dependencies pinned in `lake-manifest.json` (Batteries, Aesop, Qq,
   ProofWidgets, LeanSearchClient, `import-graph`, Plausible, `lean4-cli`), each under its
   own licence.

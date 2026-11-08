@@ -56,7 +56,7 @@ theorem UPair_isOpen (p q : ι) : IsOpen (C.UPair p q) :=
 symmetric in `p` and `q`. -/
 theorem BPair_symm (p q : ι) : C.BPair p q = C.BPair q p := by
   ext z
-  simp only [BPair, mem_setOf_eq]
+  simp only [BPair, mem_ofPred_eq]
   constructor
   · rintro ⟨h1, h2, h3⟩
     exact ⟨h2, h1, fun r hr hz => (h3 r hr hz).symm⟩

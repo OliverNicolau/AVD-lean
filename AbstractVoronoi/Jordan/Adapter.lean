@@ -9,7 +9,7 @@ The planar topology used in
 * R. Klein, E. Langetepe, Z. Nilforoushan, *Abstract Voronoi diagrams revisited*,
   Computational Geometry 42 (2009) 885–902
 
-(the Jordan curve theorem, the Jordan–Schönflies theorem, arcs inside open connected sets) is
+(the Jordan curve theorem and the Jordan–Schönflies theorem) is
 taken from outside, through the statements of `AbstractVoronoi/Jordan/Backend.lean`.  Those
 are stated with notions of simple arc (`Backend.IsArc`, `Backend.IsArcBetween`) and of Jordan
 curve (`Backend.IsJordanCurve`) that are *set*-level readings of the parametrized notions
@@ -100,8 +100,8 @@ theorem subarcParam_injOn {γ : ℝ → Plane} (h : IsArc γ) {a b : ℝ}
   have hne : b - a ≠ 0 := by linarith
   exact mul_left_cancel₀ hne (by linarith)
 
-/-- A subarc of an arc is an arc between its endpoints, in the sense of the
-Jordan–Schönflies development. -/
+/-- A subarc of an arc is an arc between its endpoints, in the set-level sense of
+the backend. -/
 theorem IsArc.isArcBetween_image {γ : ℝ → Plane} (h : IsArc γ) {a b : ℝ}
     (ha : 0 ≤ a) (hab : a < b) (hb : b ≤ 1) :
     Backend.IsArcBetween (γ '' Icc a b) (γ a) (γ b) := by
@@ -122,12 +122,12 @@ theorem IsArc.isArcBetween {γ : ℝ → Plane} (h : IsArc γ) :
     Backend.IsArcBetween (γ '' Icc 0 1) (γ 0) (γ 1) :=
   ⟨γ, h.cont, h.inj, rfl, rfl, rfl⟩
 
-/-- An arc is a simple arc in the sense of the Jordan–Schönflies development. -/
+/-- An arc is a simple arc in the set-level sense of the backend. -/
 theorem IsArc.isArc_image {γ : ℝ → Plane} (h : IsArc γ) :
     Backend.IsArc (γ '' Icc 0 1) :=
   ⟨γ, h.cont, h.inj, rfl⟩
 
-/-- Conversely, an arc between two points in the sense of the Jordan–Schönflies development
+/-- Conversely, an arc between two points in the set-level sense of the backend
 is the image of an arc in the sense used here. -/
 theorem exists_isArc_of_isArcBetween {C : Set Plane} {x y : Plane}
     (h : Backend.IsArcBetween C x y) :
@@ -137,8 +137,8 @@ theorem exists_isArc_of_isArcBetween {C : Set Plane} {x y : Plane}
 
 /-! ## Closed Jordan curves -/
 
-/-- The notion of closed Jordan curve used here coincides with the notion of Jordan curve of
-the Jordan–Schönflies development: both are the image of `[0,1]` under a map that is
+/-- The notion of closed Jordan curve used here coincides with the set-level notion of Jordan
+curve of the backend: both are the image of `[0,1]` under a map that is
 continuous there, injective on `[0,1)` and takes the same value at `0` and `1`. -/
 theorem isClosedJordanCurve_iff {C : Set Plane} :
     IsClosedJordanCurve C ↔ Backend.IsJordanCurve C := by
@@ -148,26 +148,13 @@ theorem isClosedJordanCurve_iff {C : Set Plane} :
   · rintro ⟨f, hcont, hcl, hinj, himg⟩
     exact ⟨f, hcont, hinj, hcl, himg⟩
 
-/-- **The Jordan curve theorem**, in the form proved in the Jordan–Schönflies development
+/-- **The Jordan curve theorem**, in the form stated by the backend
 and restated for the notion of closed Jordan curve used here: a closed Jordan curve of the
 plane splits the plane into two disjoint open connected domains. -/
 theorem IsClosedJordanCurve.exists_separation {C : Set Plane} (h : IsClosedJordanCurve C) :
     ∃ A B : Set Plane, IsOpen A ∧ IsOpen B ∧ IsConnected A ∧ IsConnected B ∧
       Disjoint A B ∧ Disjoint A C ∧ Disjoint B C ∧ A ∪ B ∪ C = univ :=
   Backend.jordan_curve_theorem (isClosedJordanCurve_iff.1 h)
-
-/-! ## Arcs inside an open connected set -/
-
-/-- Two distinct points of an open connected subset of the plane are joined by an arc
-inside it.  (This is the plane instance of the classical fact, quoted in footnote 5 of
-Klein–Langetepe–Nilforoushan (2009), that a connected open set is arcwise connected; it
-comes from `Backend.exists_arcBetween_of_isPreconnected`.) -/
-theorem exists_arc_in_open {R : Set Plane} (hopen : IsOpen R) (hconn : IsPreconnected R)
-    {x y : Plane} (hx : x ∈ R) (hy : y ∈ R) (hxy : x ≠ y) :
-    ∃ γ : ℝ → Plane, IsArc γ ∧ γ 0 = x ∧ γ 1 = y ∧ γ '' Icc 0 1 ⊆ R := by
-  obtain ⟨A, hAR, harc⟩ := Backend.exists_arcBetween_of_isPreconnected hopen hconn hx hy hxy
-  obtain ⟨γ, hγ, h0, h1, himg⟩ := exists_isArc_of_isArcBetween harc
-  exact ⟨γ, hγ, h0, h1, himg ▸ hAR⟩
 
 /-! ## Consequences of the Jordan curve theorem
 

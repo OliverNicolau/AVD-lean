@@ -170,7 +170,7 @@ theorem exists_components_encoding {X : Set ℝ} (hX : IsOpen X) :
     have hI'ne := hne I' hI'
     have key : ∃ y, y ∈ I ∧ y ∈ I' := by
       by_cases hb : BddBelow I <;> by_cases hb' : BddBelow I'
-      · rw [if_pos hb, if_pos hb'] at hff
+      · rw [ite_eq_left hb, ite_eq_left hb'] at hff
         have heq : sInf I = sInf I' := Option.some_injective ℝ hff
         obtain ⟨x, hx⟩ := hIne
         have hxa : sInf I < x := by
@@ -187,9 +187,9 @@ theorem exists_components_encoding {X : Set ℝ} (hX : IsOpen X) :
         obtain ⟨z, hzI, hzy⟩ := exists_lt_of_csInf_lt (hne I hI) (lt_of_le_of_ne hya hyne)
         refine ⟨y, ?_, hyI'⟩
         exact (hord I hI).out hzI hx ⟨le_of_lt hzy, le_of_lt hyx⟩
-      · rw [if_pos hb, if_neg hb'] at hff
+      · rw [ite_eq_left hb, ite_eq_right hb'] at hff
         exact absurd hff (by simp)
-      · rw [if_neg hb, if_pos hb'] at hff
+      · rw [ite_eq_right hb, ite_eq_left hb'] at hff
         exact absurd hff (by simp)
       · obtain ⟨x, hx⟩ := hIne
         obtain ⟨x', hx'⟩ := hI'ne

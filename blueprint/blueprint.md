@@ -352,9 +352,9 @@ latter — the assertion "`O(n)` edges and vertices" of the paper.
 The hypothesis `n ⩾ 3` used in the paper to split off the degenerate cases is not needed.
 
 Everything in this statement is proved from Lemmas 8 and 9 except the two bounds `2n` and
-`3n`, for which the proof below invokes Euler's inequality `AVD.EulerSphereInequality` for
+`3n`, for which the proof below uses Euler's inequality `AVD.EulerSphereInequality` for
 plane graphs.  That inequality is the only unproved statement of the development, and it
-appears in the proof below as a single `sorry`; the other ingredient of the Euler count, the
+is the hypothesis `hEuler` of the theorem; the other ingredient of the Euler count, the
 degree condition at a Voronoi vertex, is proved
 (`AVD.CurveSystem.three_le_edges_at_vertex`).
 
@@ -364,7 +364,7 @@ available separately: at most `2·C(n,3)` vertices by Lemma 9
 (`AVD.CurveSystem.edgeSet_ncard_le`). 
 
 ```lean
-theorem theorem10 (hadm : C.Admissible) :
+theorem theorem10 (hEuler : EulerSphereInequality) (hadm : C.Admissible) :
     C.V S = C.vertexSet S ∪ ⋃₀ C.edgeSet ∧
       Disjoint (C.vertexSet S) (⋃₀ C.edgeSet) ∧
       (∀ e ∈ C.edgeSet, IsConnected e ∧ ∃ p ∈ S, ∃ q ∈ S, p ≠ q ∧ e ⊆ C.J p q) ∧

@@ -20,29 +20,31 @@ intermediate facts are stated as named, reusable lemmas rather than inlined in p
 
 ```
 lake exe cache get                      # Mathlib binaries; strongly recommended
-lake build                              # builds everything; one `sorry`, in Theorem 10
+lake build                              # builds everything, with no `sorry`
 lake exe runLinter AbstractVoronoi.All  # the Mathlib declaration linters, all passing
 lake env lean scripts/axioms.lean       # the axioms each numbered statement depends on
 ```
 
-The build must stay free of errors and of warnings, save the one
-`declaration uses 'sorry'` warning for Theorem 10.  The library is built with the same Lean
+The build must stay free of errors and of warnings.  The library is built with the same Lean
 options as Mathlib — no automatic implicit arguments, the standard Mathlib style linter set;
 see `lakefile.toml`.
 
 `scripts/axioms.lean` prints, for every numbered statement, the axioms its proof uses:
-`propext`, `Classical.choice` and `Quot.sound` for all of them, and `sorryAx` in addition for
-`AVD.CurveSystem.theorem10` alone.
+`propext`, `Classical.choice` and `Quot.sound`, and nothing else, for all of them.
 
 Continuous integration (`.github/workflows/lean.yml`) runs the build and the linter, and
-fails if a second `sorry` appears in `AbstractVoronoi/`.
+fails if a `sorry` appears in `AbstractVoronoi/`.
 
 ## Invariants to preserve
 
-* **Exactly one `sorry`**, in `AbstractVoronoi/Paper/Theorem10.lean`, standing for Euler's
-  inequality `AVD.EulerSphereInequality`.  Never add another, and never add an `axiom`
-  declaration: an unproved statement is stated as a `Prop`-valued definition or a
-  hypothesis, as `AVD.EulerSphereInequality` is.
+* **No `sorry`.**  Euler's inequality `AVD.EulerSphereInequality`, the one statement the
+  project does not prove, is an explicit hypothesis `hEuler` of
+  `AVD.CurveSystem.theorem10`.  Never add a `sorry` or an `axiom` declaration: an unproved
+  statement is stated as a `Prop`-valued definition and taken as a hypothesis, as
+  `AVD.EulerSphereInequality` is.
+* **One trust boundary.**  `AbstractVoronoi/Jordan/Backend.lean` is the only file that
+  imports the external planar-topology library (Tau Ceti).  Every other file uses the
+  statements proved there.
 * **Docstrings quote the paper.**  Every declaration in `AbstractVoronoi/Paper/` carries a
   docstring naming and quoting the statement of the paper it formalizes, and saying
   explicitly where the formal statement differs from the printed one.  All declarations of
@@ -50,14 +52,15 @@ fails if a second `sorry` appears in `AbstractVoronoi/`.
 * **Statements stay faithful.**  Any deviation from the printed statement must be recorded
   both in the docstring and in `notes/statement-check.md`, and summarised in
   `docs/formalization.md`.
-* **Pinning.**  `lean-toolchain` and `lake-manifest.json` pin the compiler, Mathlib, the
-  Jordan–Schönflies dependency and all transitive dependencies.  Do **not** run
+* **Pinning.**  `lean-toolchain` (`leanprover/lean4:v4.36.0-rc2`) and `lake-manifest.json`
+  pin the compiler, Mathlib, Tau Ceti and all transitive dependencies.  Do **not** run
   `lake update`: it would move the dependencies off the revisions the library is checked
   against.  If the manifest is ever out of sync with `lakefile.toml`, regenerate it and
-  check that it still pins Mathlib at the revision of the `v4.32.2` tag
-  (`905b95818eb32af7874a58b427f50c1711a5e96c`), matching `lean-toolchain`, and
-  `schoenflies-lean` at `05a43d29cde026618777db3d4e4316204ccca237`; then rebuild the whole
-  library against it.
+  check that it still pins Tau Ceti at `4908b0344e1be5f7e9e5af7f7e640464843a2c84` and
+  Mathlib at `1b1ccf4b088b32fa3f23f2de1127433254a81e1e`, exactly the Mathlib commit of Tau
+  Ceti's own manifest; then rebuild the whole library against it.  Tau Ceti has no prebuilt
+  binaries usable here, so a first build compiles about 360 of its files (about ten minutes
+  on a 16-core laptop).
 * **Style.**  Lines are wrapped at 100 characters; Mathlib naming conventions are used.
 
 ## After changing a statement

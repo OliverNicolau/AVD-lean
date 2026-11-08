@@ -13,10 +13,11 @@ Lemma 8 and Lemma 9 of
 > R. Klein, E. Langetepe, Z. Nilforoushan, *Abstract Voronoi diagrams revisited*,
 > Computational Geometry 42 (2009) 885–902
 
-are formalized and proved, and so is everything Theorem 10 asserts except its `O(n)` count.
-They depend only on the standard axioms of Lean (`propext`, `Classical.choice`,
-`Quot.sound`) on top of the Jordan–Schönflies development the project builds on; this can be
-reproduced with
+are formalized and proved, and so is Theorem 10, with Euler's inequality as an explicit
+hypothesis `hEuler` for its `O(n)` count.  The project contains no `sorry`.  Every theorem
+depends only on the standard axioms of Lean (`propext`, `Classical.choice`, `Quot.sound`) on
+top of the planar topology that `AbstractVoronoi/Jordan/Backend.lean` proves from Tau Ceti
+and Mathlib; this can be reproduced with
 
 ```
 lake build
@@ -27,8 +28,8 @@ lake exe runLinter AbstractVoronoi.All
 The planar topology that the paper uses freely and that Mathlib does not contain is proved
 in `AbstractVoronoi/Jordan/`: the global and local forms of Theorem 4, the accessibility of
 the points of a Jordan curve, the crosscut and θ-curve theorems, small crosscuts and the
-small Jordan subdomains they bound, the non-planarity of `K₃,₃`, and the completion of an
-arc to a closed Jordan curve.  `docs/library.md` lists these file by file.
+small Jordan subdomains they bound, arcs in open connected sets and in the complement of an
+arc, the non-planarity of `K₃,₃`, and the completion of an arc to a closed Jordan curve.  `docs/library.md` lists these file by file.
 
 ## 2. The one open statement: Euler's inequality
 
@@ -41,8 +42,8 @@ formula in two propositions.
   Voronoi diagram, **is** proved (`AVD.CurveSystem.three_le_edges_at_vertex`, in
   `AbstractVoronoi/AVD/VertexDegree.lean`).
 * `AVD.EulerSphereInequality` — the Euler inequality `e + 1 ⩽ v + f`.  This is the single
-  unproved statement of the project, and the proof of `AVD.CurveSystem.theorem10` invokes it
-  through the single `sorry`.
+  unproved statement of the project, and `AVD.CurveSystem.theorem10` takes it as the
+  explicit hypothesis `hEuler`.
 
 Everything else the count needs is proved: the diagram is a finite plane graph whose faces
 are its non-empty Voronoi regions (at most `n` of them), every Voronoi vertex lies on the

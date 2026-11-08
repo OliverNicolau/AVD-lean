@@ -13,8 +13,8 @@ bisecting curve — is proved here in full, as is the explicit bound `2·C(n,3)`
 of vertices coming from Lemma 9.
 
 The count `O(n)` is the one point of this development that is not proved: the paper obtains
-it from Euler's formula for plane graphs.  A single statement is assumed by the proof below,
-through a `sorry`: the **Euler inequality** `e + 1 ⩽ v + f` (`AVD.EulerSphereInequality`).
+it from Euler's formula for plane graphs.  The theorem therefore takes a single statement as
+an explicit hypothesis: the **Euler inequality** `e + 1 ⩽ v + f` (`AVD.EulerSphereInequality`).
 
 The other half of the Euler input, the **degree condition** at a Voronoi vertex — at least
 three edges end at every Voronoi vertex — is now proved
@@ -54,9 +54,9 @@ latter — the assertion "`O(n)` edges and vertices" of the paper.
 The hypothesis `n ⩾ 3` used in the paper to split off the degenerate cases is not needed.
 
 Everything in this statement is proved from Lemmas 8 and 9 except the two bounds `2n` and
-`3n`, for which the proof below invokes Euler's inequality `AVD.EulerSphereInequality` for
+`3n`, for which the proof below uses Euler's inequality `AVD.EulerSphereInequality` for
 plane graphs.  That inequality is the only unproved statement of the development, and it
-appears in the proof below as a single `sorry`; the other ingredient of the Euler count, the
+is the hypothesis `hEuler` of the theorem; the other ingredient of the Euler count, the
 degree condition at a Voronoi vertex, is proved
 (`AVD.CurveSystem.three_le_edges_at_vertex`).
 
@@ -64,7 +64,7 @@ Sharper bounds that do *not* use Euler's formula, and are therefore proved outri
 available separately: at most `2·C(n,3)` vertices by Lemma 9
 (`AVD.CurveSystem.vertexSet_ncard_le`) and at most `C(n,2)·(2·C(n,3) + 1)` edges
 (`AVD.CurveSystem.edgeSet_ncard_le`). -/
-theorem theorem10 (hadm : C.Admissible) :
+theorem theorem10 (hEuler : EulerSphereInequality) (hadm : C.Admissible) :
     C.V S = C.vertexSet S ∪ ⋃₀ C.edgeSet ∧
       Disjoint (C.vertexSet S) (⋃₀ C.edgeSet) ∧
       (∀ e ∈ C.edgeSet, IsConnected e ∧ ∃ p ∈ S, ∃ q ∈ S, p ≠ q ∧ e ⊆ C.J p q) ∧
@@ -92,9 +92,7 @@ theorem theorem10 (hadm : C.Admissible) :
     -- (i) the degree condition at a Voronoi vertex: at least three edges end there
     have hdegree_edges : ∀ v ∈ C.vertexSet S, 3 ≤ {e ∈ C.edgeSet | v ∈ closure e}.ncard :=
       fun v hv => three_le_edges_at_vertex hadm hv
-    -- (ii) Euler's inequality for plane graphs, the one statement left unproved here
-    have hEuler : EulerSphereInequality := by
-      sorry
+    -- (ii) Euler's inequality for plane graphs (`hEuler`), the one statement assumed here
     obtain ⟨hv, he⟩ := hgraph.ncard_le_of_degree hfaces_finite hdegree_edges hEuler
     exact ⟨hv.trans (Nat.mul_le_mul_left 2 hfaces_card),
       he.trans (Nat.mul_le_mul_left 3 hfaces_card)⟩

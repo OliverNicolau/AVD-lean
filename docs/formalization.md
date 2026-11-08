@@ -52,10 +52,10 @@ curve system) are `AVD.CurveSystem.VR` and `AVD.CurveSystem.V`, also in
   lemmas that identify them with the two complementary domains of the Jordan curve theorem
   therefore carry the admissibility hypothesis.
 * The `O(n)` count of Theorem 10 is obtained in the paper from Euler's formula for plane
-  graphs.  One topological input is *stated* but not proved here, and the proof of
-  `theorem10` invokes it through the single `sorry` of the development: the **Euler
-  inequality** `e + 1 ⩽ v + f` (`AVD.EulerSphereInequality`).  The other input, the **degree
-  condition** at a Voronoi vertex — at least three edges end at it — is proved
+  graphs.  One topological input is *stated* but not proved here, and `theorem10` takes it
+  as an explicit hypothesis `hEuler`: the **Euler inequality** `e + 1 ⩽ v + f`
+  (`AVD.EulerSphereInequality`).  The other input, the **degree condition** at a Voronoi
+  vertex — at least three edges end at it — is proved
   (`AVD.CurveSystem.three_le_edges_at_vertex`): near a vertex the diagram consists of the
   vertex and of the edges ending there, each of which is a single branch of its bisecting
   curve; if there were at most two such branches they would form an arc through the vertex,
@@ -88,18 +88,18 @@ the docstring of the declaration says so.
 
 ## What is proved and what is assumed
 
-**One statement is left open, and it is used in exactly one place.**  The project contains a
-single `sorry`, in the proof of **Theorem 10**: Euler's inequality `e + 1 ⩽ v + f`, stated as
-`AVD.EulerSphereInequality` in `AbstractVoronoi/Jordan/PlaneGraph.lean`, from which the paper
-reads off the count `O(n)`.  The other input of that count, the degree condition at a Voronoi
-vertex — at least three edges end at it — is proved
+**One statement is left open, and it is used in exactly one place.**  The project contains no
+`sorry`.  Euler's inequality `e + 1 ⩽ v + f`, stated as `AVD.EulerSphereInequality` in
+`AbstractVoronoi/Jordan/PlaneGraph.lean`, from which the paper reads off the count `O(n)`, is
+an explicit hypothesis `hEuler` of **Theorem 10**.  The other input of that count, the
+degree condition at a Voronoi vertex — at least three edges end at it — is proved
 (`AVD.CurveSystem.three_le_edges_at_vertex`).  Both are discussed in
 `notes/euler-formula-and-counting.md`; the counting step that derives the bounds the paper
-uses from them is proved.  Everything else is proved: Definition 1 to Lemma 9
-and every supporting statement depend only on the standard axioms of Lean (`propext`,
-`Classical.choice`, `Quot.sound`) on top of the Jordan–Schönflies dependency described
-above, and `AVD.CurveSystem.theorem10` is the only declaration of the project depending on
-`sorryAx`.  In particular:
+uses from them is proved.  Everything else is proved: every declaration of the project,
+`AVD.CurveSystem.theorem10` included, depends only on the standard axioms of Lean
+(`propext`, `Classical.choice`, `Quot.sound`), on top of the planar topology that
+`AbstractVoronoi/Jordan/Backend.lean` proves from Tau Ceti (see
+[`library.md`](library.md#dependency-tau-ceti)).  In particular:
 
 * **Lemma 3** and **Lemma 5** are proved *unconditionally*: the only input they take from
   Theorem 4 is that a bisecting curve is the common boundary of its two domains
@@ -153,7 +153,8 @@ above, and `AVD.CurveSystem.theorem10` is the only declaration of the project de
 
 Proved with no assumption at all, along the way:
 
-* `AVD.noPlaneEmbeddingK33` — the complete bipartite graph `K₃,₃` has no plane embedding;
+* `AVD.noPlaneEmbeddingK33` — the complete bipartite graph `K₃,₃` has no plane embedding,
+  from the Jordan–Schönflies theorem and the θ-curve theorem;
 * `AVD.exists_arc_of_accessible` and `AVD.exists_star_of_accessible` — two, respectively
   three, points accessible from an open path-connected set can be joined by an arc,
   respectively a plane tree, whose relative interior lies in that set (the three "Facts" of
@@ -161,7 +162,8 @@ Proved with no assumption at all, along the way:
 * `AVD.IsClosedJordanCurve.exists_separation` and `…exists_separation_frontier` — the Jordan
   curve theorem for the notion of closed Jordan curve used here, and the parts of Theorem 4
   that follow from it;
-* `AVD.exists_arc_avoiding_arc` — the non-separation theorem for arcs;
+* `AVD.exists_isArc_compl_arc` and `AVD.exists_arc_avoiding_arc` — the non-separation
+  theorem for arcs, from the connectedness of the complement of a simple arc;
 * `AVD.IsClosedJordanCurve.locallyConnectedAt` and
   `AVD.IsUnboundedJordanCurve.locallyConnectedAt` — the local connectedness of the
   complementary domains of a Jordan curve at the points of the curve, from the

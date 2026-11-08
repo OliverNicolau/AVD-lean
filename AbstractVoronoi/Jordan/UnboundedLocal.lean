@@ -297,7 +297,7 @@ theorem IsUnboundedJordanCurve.exists_local_nbhd {C D₁ D₂ : Set Plane}
       intro hbd
       obtain ⟨R, hR⟩ := hbd.subset_closedBall (0 : ℝ)
       have hmem' : min (-R - 1) (s - 1) ∈ Iio s :=
-        lt_of_le_of_lt (min_le_right (-R - 1) (s - 1)) (by linarith)
+        lt_of_le_of_lt (min_le_right (-R - 1) (s - 1)) (sub_one_lt s)
       have h1 := hR hmem'
       rw [mem_closedBall, Real.dist_eq, sub_zero, abs_le] at h1
       linarith [h1.1, min_le_left (-R - 1) (s - 1)]

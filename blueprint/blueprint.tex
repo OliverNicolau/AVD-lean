@@ -327,11 +327,11 @@ The plane graph structure is expressed as follows.  The Voronoi diagram is the d
 
 The hypothesis \texttt{n $\geq$ 3} used in the paper to split off the degenerate cases is not needed.
 
-Everything in this statement is proved from Lemmas 8 and 9 except the two bounds \texttt{2n} and \texttt{3n}, for which the proof below invokes Euler's inequality \texttt{AVD.\allowbreak{}EulerSphereInequality} for plane graphs.  That inequality is the only unproved statement of the development, and it appears in the proof below as a single \texttt{sorry}; the other ingredient of the Euler count, the degree condition at a Voronoi vertex, is proved (\texttt{AVD.\allowbreak{}CurveSystem.\allowbreak{}three\_\allowbreak{}le\_\allowbreak{}edges\_\allowbreak{}at\_\allowbreak{}vertex}).
+Everything in this statement is proved from Lemmas 8 and 9 except the two bounds \texttt{2n} and \texttt{3n}, for which the proof below uses Euler's inequality \texttt{AVD.\allowbreak{}EulerSphereInequality} for plane graphs.  That inequality is the only unproved statement of the development, and it is the hypothesis \texttt{hEuler} of the theorem; the other ingredient of the Euler count, the degree condition at a Voronoi vertex, is proved (\texttt{AVD.\allowbreak{}CurveSystem.\allowbreak{}three\_\allowbreak{}le\_\allowbreak{}edges\_\allowbreak{}at\_\allowbreak{}vertex}).
 
 Sharper bounds that do \emph{not} use Euler's formula, and are therefore proved outright, are available separately: at most \texttt{2$\cdot$C(n,3)} vertices by Lemma 9 (\texttt{AVD.\allowbreak{}CurveSystem.\allowbreak{}vertexSet\_\allowbreak{}ncard\_\allowbreak{}le}) and at most \texttt{C(n,2)$\cdot$(2$\cdot$C(n,3) + 1)} edges (\texttt{AVD.\allowbreak{}CurveSystem.\allowbreak{}edgeSet\_\allowbreak{}ncard\_\allowbreak{}le}).
 \begin{leancode}
-theorem theorem10 (hadm : C.Admissible) :
+theorem theorem10 (hEuler : EulerSphereInequality) (hadm : C.Admissible) :
     C.V S = C.vertexSet S ∪ \(\bigcup\)₀ C.edgeSet ∧
       Disjoint (C.vertexSet S) (\(\bigcup\)₀ C.edgeSet) ∧
       (∀ e ∈ C.edgeSet, IsConnected e ∧ ∃ p ∈ S, ∃ q ∈ S, p ≠ q ∧ e ⊆ C.J p q) ∧
